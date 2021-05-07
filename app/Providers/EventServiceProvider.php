@@ -2,18 +2,25 @@
 
 namespace App\Providers;
 
-use App\Events\GlobalEvent;
+use Throwable;
 use App\Events\TestEvent;
+use App\Events\GlobalEvent;
+use App\Events\TestQueue;
 use App\Listeners\DemoListener;
+use App\Listeners\TestListener;
 use App\Listeners\GlobalListener;
 use App\Listeners\SampleListener;
-use App\Listeners\TestListener;
-use App\Listeners\TestListnerSubscriber;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Auth\Events\Registered;
+
+use App\Listeners\TestListenerSubscriber;
+use App\Listeners\TestQueueListener;
+
+use function Illuminate\Events\queueable;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Subscribe to multiple events from within the subscriber class itself
@@ -35,6 +42,9 @@ class EventServiceProvider extends ServiceProvider
             DemoListener::class,
             SampleListener::class,
         ],
+        TestQueue::class => [
+            TestQueueListener::class,
+        ],
     ];
 
     /**
@@ -43,7 +53,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
-        TestListnerSubscriber::class,
+        TestListenerSubscriber::class,
     ];
 
     /**
@@ -60,6 +70,27 @@ class EventServiceProvider extends ServiceProvider
             Log::info('[Event:admin:test] => '.json_encode([$eventName, $data]));
             Log::info('[Event:admin:test][args] => '.json_encode(func_get_args()));
         });
+
+        // Event with queue via closure
+        // Run: php artisan queue:work redis --queue=podcasts
+        // Where: redis: queue connection name, podcasts: queue name
+        // When dispatch event of GlobalEvent (GlobalEvent::dispatch()), this queue will run
+        Event::listen(
+            queueable(function (GlobalEvent $event) {
+                Redis::set('test', 'demo');
+                $data = [
+                    "Get value of 'test' key from redis servcer" => Redis::get('test'),
+                    "Event data" => $event->data ?? null
+                ];
+                echo "Data => ".json_encode($data, JSON_PRETTY_PRINT)."\n";
+            })
+            ->catch(function (GlobalEvent $event, Throwable $e) {
+                echo "[Error]: ".$e->getMessage();
+            })
+            ->onConnection('redis')
+            ->onQueue('podcasts')
+            ->delay(now()->addSeconds(10))
+        );
     }
 
     /**

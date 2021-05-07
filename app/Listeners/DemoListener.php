@@ -27,6 +27,6 @@ class DemoListener
      */
     public function handle(TestEvent $event)
     {
-        Log::info('[Listner][Demo] => '.json_encode($event->data));
+        Log::info('[Listener][Demo] => '.json_encode($event->data));
     }
 }

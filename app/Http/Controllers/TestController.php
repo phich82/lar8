@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GlobalEvent;
 use App\Events\TestEvent;
+use App\Events\TestQueue;
 use App\Listeners\TestListnerSubscriber;
 use App\Services\Facades\ENV;
 use Illuminate\Http\Request;
@@ -19,6 +21,8 @@ class TestController extends Controller
         Cache::forever('MRSPEEDY_API_KEY', 'MRSPEEDY_API_KEY');
 
         Event::dispatch('admin:test', ['a' => 100, 'b' => 20, 'c' => 40]);
+        GlobalEvent::dispatch([]);
+        TestQueue::dispatch(['subtotal' => 6000]);
         TestEvent::dispatch([1, 2, 3, 4]);
         Event::dispatch('Web::Login', ['a' => 200, 'b' => 500]);
 

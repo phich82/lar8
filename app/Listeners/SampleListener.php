@@ -27,6 +27,6 @@ class SampleListener
      */
     public function handle(TestEvent $event)
     {
-        Log::info('[Listner][Sample] => '.json_encode($event->data));
+        Log::info('[Listener][Sample] => '.json_encode($event->data));
     }
 }

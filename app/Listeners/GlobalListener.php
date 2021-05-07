@@ -3,8 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\GlobalEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class GlobalListener
 {
@@ -26,6 +27,6 @@ class GlobalListener
      */
     public function handle(GlobalEvent $event)
     {
-        //
+        Log::info('[Listener][Global] => '.json_encode($event->data));
     }
 }

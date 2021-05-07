@@ -6,7 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-class TestListnerSubscriber
+class TestListenerSubscriber
 {
     /**
      * Create the event listener.
@@ -23,7 +23,7 @@ class TestListnerSubscriber
      */
     public function handleLogin($event = [])
     {
-        Log::info('[ListnerSubscriber] => Handle Login: '.json_encode(['event' => $event, 'args' => func_get_args()]));
+        Log::info('[ListenerSubscriber] => Handle Login: '.json_encode(['event' => $event, 'args' => func_get_args()]));
     }
 
     /**
@@ -31,7 +31,7 @@ class TestListnerSubscriber
      */
     public function handleLogout($event = [])
     {
-        Log::info('[ListnerSubscriber] => Handle Logout: '.json_encode(['event' => $event, 'args' => func_get_args()]));
+        Log::info('[ListenerSubscriber] => Handle Logout: '.json_encode(['event' => $event, 'args' => func_get_args()]));
     }
 
     /**
@@ -44,12 +44,12 @@ class TestListnerSubscriber
     {
         $events->listen(
             'Web::Login',
-            [TestListnerSubscriber::class, 'handleLogin']
+            [TestListenerSubscriber::class, 'handleLogin']
         );
 
         $events->listen(
             'Web::Logout',
-            [TestListnerSubscriber::class, 'handleLogout']
+            [TestListenerSubscriber::class, 'handleLogout']
         );
     }
 }

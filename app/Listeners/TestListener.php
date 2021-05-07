@@ -9,12 +9,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class TestListener
 {
+
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data = [])
     {
         //
     }
@@ -27,6 +28,6 @@ class TestListener
      */
     public function handle(TestEvent $event)
     {
-        Log::info('[Listner][Test] => '.json_encode($event->data));
+        Log::info('[Listener][Test] => '.json_encode($event->data));
     }
 }
